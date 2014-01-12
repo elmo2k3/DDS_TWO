@@ -1,0 +1,13 @@
+*.swp
+TEST
+*.d
+*.o
+*.lst
+*.eep
+*.elf
+*.hex
+*.lss
+*.lst
+*.map
+*.sym
+*.logicdata

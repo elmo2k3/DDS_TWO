@@ -39,7 +39,7 @@ TARGET = DDS_TWO
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c
+SRC = $(TARGET).c buttons.c drehgeber.c page_misc.c page_main.c ks0108/ks0108.c ad9910.c
 
 
 # List Assembler source files here.
@@ -77,7 +77,7 @@ $(patsubst %,-I%,$(EXTRAINCDIRS))
 #CFLAGS += -std=c89
 #CFLAGS += -std=gnu89
 #CFLAGS += -std=c99
-CFLAGS += -std=gnu99 -D F_CPU=16000000 -D F_OSC=F_CPU -D_RFM12 -D ONE_BUTTON_ONLY
+CFLAGS += -std=gnu99 -D F_CPU=16000000 -D F_OSC=F_CPU
 
 
 
