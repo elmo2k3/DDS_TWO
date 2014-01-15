@@ -21,11 +21,18 @@
 
 #define OUTPUT_LED PA4
 
-#define NUM_PAGES 2
+#define NUM_PAGES 6
 static struct menuitem menu[] = {
-    {NULL,0, update_main, main_drehgeber, main_button_pressed, page_main, NULL,0,0},
-    {NULL,1, update_main, NULL, main_button_pressed, page_main, NULL,0,0}
+    {NULL,0, update_main, main_drehgeber, main_button_pressed, page_main},
+    {NULL,1, update_main, NULL, main_button_pressed, page_main},
+    {NULL,2, update_main, NULL, main_button_pressed, page_main},
+    {NULL,3, update_main, NULL, main_button_pressed, page_main},
+    {NULL,4, update_main, NULL, main_button_pressed, page_main},
+    {NULL,5, update_main, NULL, main_button_pressed, page_main}
 };
+
+uint8_t refreshFlags;
+#define SEC_TENTH 0
 
 void io_init(void)
 {
@@ -52,15 +59,19 @@ int main(void)
     uint8_t focus_here = 1;
 
 	DDRC |= (1<<PC2);
-    menu[0].name = PSTR("DDS TWO");
-    menu[1].name = PSTR("DDS TWO 2");
+    menu[0].name = PSTR("Single Tone");
+    menu[1].name = PSTR("Linear Sweep");
+    menu[2].name = PSTR("Settings");
+    menu[3].name = PSTR("DDS TWO 2");
+    menu[4].name = PSTR("DDS TWO 2");
+    menu[5].name = PSTR("DDS TWO 2");
 
 	io_init();
     ks0108Init();
     drehgeber_init();
+	ad9910_init();
     draw_page_header(&menu[menu_position]);
 	menu[menu_position].draw_func(&menu[menu_position]);
-	ad9910_init();
 
 	sei();
 	
@@ -91,22 +102,22 @@ int main(void)
         }
         if(get_key_press(1<<KEY0)){ //button left
             if(menu[menu_position].taster_func){
-                menu[menu_position].taster_func(&menu[menu_position],0);
+                focus_here = menu[menu_position].taster_func(&menu[menu_position],0);
             }
         }
         if(get_key_press(1<<KEY1)){ //button left +1
             if(menu[menu_position].taster_func){
-                menu[menu_position].taster_func(&menu[menu_position],1);
+                focus_here = menu[menu_position].taster_func(&menu[menu_position],1);
             }
         }
         if(get_key_press(1<<KEY2)){ //button right -1
             if(menu[menu_position].taster_func){
-                menu[menu_position].taster_func(&menu[menu_position],2);
+                focus_here = menu[menu_position].taster_func(&menu[menu_position],2);
             }
         }
         if(get_key_press(1<<KEY3)){ //button right
             if(menu[menu_position].taster_func){
-                menu[menu_position].taster_func(&menu[menu_position],3);
+                focus_here = menu[menu_position].taster_func(&menu[menu_position],3);
             }
 			PORTA ^= (1<<OUTPUT_LED);
         }
@@ -115,19 +126,26 @@ int main(void)
                 focus_here = menu[menu_position].taster_func(&menu[menu_position],4);
             }
         }
+        if(refreshFlags & (1<<SEC_TENTH)){
+			if(menu[menu_position].refresh_func){
+				menu[menu_position].refresh_func(&menu[menu_position],SEC_TENTH);
+			}
+            refreshFlags &= ~(1<<SEC_TENTH);
+        }
     }
 }
 
 ISR(TIMER0_COMP_vect) // 1ms
 {
     cli();
-    static uint16_t prescaler = 1000;
+	uint8_t toggle = 0;
+    static uint16_t prescaler = 10000;
     
     drehgeber_work();
 
     if(--prescaler == 0){
-        //refreshFlags |= (1<<SEC);
-        prescaler = 1000;
+        refreshFlags |= (1<<SEC_TENTH);
+        prescaler = 10000;
     }else if(!(prescaler % 10)){ // 10ms
         buttons_every_10_ms();
     }

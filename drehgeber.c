@@ -3,7 +3,7 @@
 #include <avr/interrupt.h>
 #include "drehgeber.h"
  
-#define DYNAMIK 10
+#define DYNAMIK 20
  
 static volatile int16_t enc_delta;          // -128 ... 127
 static volatile int8_t last;
@@ -19,8 +19,10 @@ void drehgeber_init( void )
     new ^= 1;                   // convert gray to binary
     last = new;                   // power on state
     enc_delta = 0;
-    TCCR0 = 1<<WGM01^1<<CS01^1<<CS00;     // CTC, XTAL / 64
-    OCR0 = (uint8_t)(F_CPU / 64.0 * 1e-3 - 0.5);   // 1ms
+//    TCCR0 = 1<<WGM01^1<<CS01^1<<CS00;     // CTC, XTAL / 64
+    //TCCR0 = 1<<WGM01^1<<CS01;     // CTC, XTAL / 8
+    TCCR0 = 1<<WGM01^1<<CS01;     // CTC, XTAL / 1
+    OCR0 = (uint8_t)(F_CPU / 64.0 * 1e-3 - 0.5);   // 1ms ?
     TIMSK |= 1<<OCIE0;
 }
 

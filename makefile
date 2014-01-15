@@ -39,7 +39,7 @@ TARGET = DDS_TWO
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c buttons.c drehgeber.c page_misc.c page_main.c ks0108/ks0108.c ad9910.c
+SRC = $(TARGET).c buttons.c drehgeber.c page_misc.c page_main.c ks0108/ks0108.c ad9910.c adc.c
 
 
 # List Assembler source files here.

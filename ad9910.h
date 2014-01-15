@@ -21,8 +21,14 @@
 #define DDS_PROFILE1 PE6
 #define DDS_PROFILE2 PE7
 
+#define PGA0 PG0
+#define PGA1 PG1
+#define PGA2 PG2
+#define PGA3 PG3
+
 void ad9910_init();
-void dds_set_single_tone_frequency(uint32_t frequency);
+void dds_set_single_tone_frequency(uint16_t amplitude, uint32_t frequency);
+void pga_set_gain(uint8_t gain);
 
 #endif
 

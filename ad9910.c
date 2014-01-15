@@ -10,6 +10,8 @@
 #define DDS_REGISTER_CFR3_LENGTH 4
 #define DDS_REGISTER_FTW 0x07
 #define DDS_REGISTER_FTW_LENGTH 4
+#define DDS_REGISTER_SINGLE_TONE0 0x0E
+#define DDS_REGISTER_SINGLE_TONE_LENGTH 8
 
 #define PLL_ENABLE (1<<8)
 #define PFD_RESET (1<<10)
@@ -24,6 +26,9 @@
 #define DDS_CS_CLR() 	DDS_PORT0 &= ~(1<<DDS_CS);
 #define DDS_DO_RESET()		DDS_PORT0 |= (1<<DDS_MASTER_RESET); DDS_PORT0 &= ~(1<<DDS_MASTER_RESET);
 #define DDS_DO_IOUPDATE()	DDS_PORT0 |= (1<<DDS_IO_UPDATE); DDS_PORT0 &= ~(1<<DDS_IO_UPDATE);
+
+//#define FREQUENCY_FACTOR 2235 // divide by 10000
+#define FREQUENCY_FACTOR 4.475
 
 static uint8_t *uint64_to_uint8_array(uint64_t value)
 {
@@ -102,22 +107,33 @@ void ad9910_init()
 	DDRE |= (1<<TX) | (1<<DDS_OSK) | (1<<DDS_DRCTL) | (1<<DDS_PROFILE0) | (1<<DDS_PROFILE1) | (1<<DDS_PROFILE2);
 	PORTE |= (1<<DDS_OSK);
 	PORTE &= ~(1<<DDS_DRCTL);
+
+	DDRG = (1<<PGA0) | (1<<PGA1) | (1<<PGA2) | (1<<PGA3);
+	PORTG = (0<<PGA0) | (1<<PGA1) | (0<<PGA2) | (1<<PGA3);
 	
 	//SPI
 	SPCR |= (1<<SPE)|(1<<MSTR)|(1<<SPR1)|(1<<SPR0)|(0<<CPOL);
-	SPSR |= (0<<SPI2X);
+	SPSR |= (1<<SPI2X);
 	
 	DDS_DO_RESET();
 	
 	dds_cmd_32(DDS_REGISTER_CFR3, 0, PLL_N(40) | PLL_ENABLE | REFCLK_IN_DIV_RESET_B | PLL_DRV0(1) | PLL_VCO_SEL(5) | PLL_ICP(3), DDS_REGISTER_CFR3_LENGTH);
 	DDS_DO_IOUPDATE();
-	
-	//dds_set_single_tone_frequency(10000);
 }
 
-void dds_set_single_tone_frequency(uint32_t frequency)
+void dds_set_single_tone_frequency(uint16_t amplitude, uint32_t frequency)
 {
-	uint64_t val = 0x1111111100000000|(0xFFFFFFFF>>3);
-	dds_cmd_64(0x0E,0, val, 8);
+	uint64_t val;
+	uint16_t phase = 0;
+
+	val = ((uint64_t)amplitude & 0x3FFF)<<48 | (uint64_t)phase<<32|(uint32_t)(((double)frequency*FREQUENCY_FACTOR));
+	dds_cmd_64(DDS_REGISTER_SINGLE_TONE0,0, val, DDS_REGISTER_SINGLE_TONE_LENGTH);
 	DDS_DO_IOUPDATE();
 }
+
+void pga_set_gain(uint8_t gain)
+{
+	gain = (gain & 0x03) | ((gain & 0x8)>>1) | ((gain & 0x04)<<1);
+	PORTG = gain & (1<<PGA0 | 1<<PGA1 | 1<<PGA2 | 1<<PGA3);
+}
+

@@ -17,6 +17,9 @@
 #include "arial_bold_12.h"
 #include "arial_bold_36.h"
 #include "arial_bold_30.h"
+#include "arial_18_not_prop.h"
+#include "arial_24_not_prop.h"
+#include "arial_30_not_prop.h"
 #include "arial_24.h"
 
 static lcdCoord		ks0108Coord;
@@ -301,7 +304,11 @@ void ks0108SelectFont(uint8_t num, uint8_t color){
 	}else if(num == 2){
 		ks0108Font = Arial_Bold_12;
 	}else if(num == 3){
-		ks0108Font = Arial_Bold_30;
+		ks0108Font = arial_18_not_prop;
+	}else if(num == 4){
+		ks0108Font = arial_24_not_prop;
+	}else if(num == 5){
+		ks0108Font = arial_30_not_prop;
 	}
 }
 

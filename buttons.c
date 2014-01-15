@@ -12,7 +12,7 @@ void buttons_every_10_ms(){
     static uint8_t ct0, ct1, rpt;
     uint8_t i;
 
-    i = key_state ^ ~((PIND & (1<<KEY0)) | (PINB & (1<<KEY1)) | 
+    i = key_state ^ ~((PINA & (1<<KEY0)) | (PINA & (1<<KEY1)) | 
                       (PINA & ((1<<KEY2) | (1<<KEY3) | (1<<KEY4))));
     ct0 = ~(ct0 & i);
     ct1 = ct0 ^(ct1 & i);
