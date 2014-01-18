@@ -21,6 +21,8 @@
 #define PLL_ICP(X) ((uint32_t)X<<19)
 #define PLL_VCO_SEL(X) ((uint32_t)X<<24)
 #define PLL_DRV0(X) ((uint32_t)X<<28)
+#define DAC_POWER_DOWN 6
+#define DDS_POWER_DOWN 7
 
 #define DDS_CS_SET() 	DDS_PORT0 |= (1<<DDS_CS);
 #define DDS_CS_CLR() 	DDS_PORT0 &= ~(1<<DDS_CS);
@@ -28,7 +30,7 @@
 #define DDS_DO_IOUPDATE()	DDS_PORT0 |= (1<<DDS_IO_UPDATE); DDS_PORT0 &= ~(1<<DDS_IO_UPDATE);
 
 //#define FREQUENCY_FACTOR 2235 // divide by 10000
-#define FREQUENCY_FACTOR 4.475
+#define FREQUENCY_FACTOR 4.474705
 
 static uint8_t *uint64_to_uint8_array(uint64_t value)
 {
@@ -96,6 +98,11 @@ static void dds_cmd_64(uint8_t address, uint8_t read_access, uint64_t value, uin
 	dds_cmd(address,read_access,values,size);
 }
 
+void dds_power(uint8_t off){
+	dds_cmd_32(DDS_REGISTER_CFR1, 0, (off<<DDS_POWER_DOWN), DDS_REGISTER_CFR1_LENGTH);
+	DDS_DO_IOUPDATE();
+}
+
 void ad9910_init()
 {
 	DDRB |= (1<<DDS_CS) | (1<<DDS_SCK) | (1<<DDS_MOSI) | (1<<DDS_MASTER_RESET) | (1<<DDS_IO_UPDATE) | (1<<DDS_IO_RESET);
@@ -104,7 +111,7 @@ void ad9910_init()
 	_delay_us(1);
 	PORTB &= ~((1<<DDS_IO_RESET) | (1<<DDS_MASTER_RESET));
 	
-	DDRE |= (1<<TX) | (1<<DDS_OSK) | (1<<DDS_DRCTL) | (1<<DDS_PROFILE0) | (1<<DDS_PROFILE1) | (1<<DDS_PROFILE2);
+	DDRE |= (1<<DDS_OSK) | (1<<DDS_DRCTL) | (1<<DDS_PROFILE0) | (1<<DDS_PROFILE1) | (1<<DDS_PROFILE2);
 	PORTE |= (1<<DDS_OSK);
 	PORTE &= ~(1<<DDS_DRCTL);
 
@@ -116,9 +123,10 @@ void ad9910_init()
 	SPSR |= (1<<SPI2X);
 	
 	DDS_DO_RESET();
-	
+
 	dds_cmd_32(DDS_REGISTER_CFR3, 0, PLL_N(40) | PLL_ENABLE | REFCLK_IN_DIV_RESET_B | PLL_DRV0(1) | PLL_VCO_SEL(5) | PLL_ICP(3), DDS_REGISTER_CFR3_LENGTH);
 	DDS_DO_IOUPDATE();
+	dds_power(1);
 }
 
 void dds_set_single_tone_frequency(uint16_t amplitude, uint32_t frequency)

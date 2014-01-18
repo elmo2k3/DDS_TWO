@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <avr/pgmspace.h>
 #include <avr/interrupt.h>
+#include <avr/wdt.h>
 
 #include "DDS_TWO.h"
 #include "buttons.h"
@@ -18,8 +19,11 @@
 #include "page_misc.h"
 #include "page_main.h"
 #include "ad9910.h"
+#include "portbits.h"
+#include "uart.h"
 
 #define OUTPUT_LED PA4
+#define UART_BAUDRATE 115200
 
 #define NUM_PAGES 6
 static struct menuitem menu[] = {
@@ -32,7 +36,7 @@ static struct menuitem menu[] = {
 };
 
 uint8_t refreshFlags;
-#define SEC_TENTH 0
+#define SEC_HALF 0
 
 void io_init(void)
 {
@@ -57,6 +61,9 @@ int main(void)
     int8_t menu_position = 0;
     int8_t old_menu_position = 0;
     uint8_t focus_here = 1;
+	void (*reset)(void) = 0x0;
+	void (*bootloader)(void) = 0x1f800;
+	uint8_t on_off = 0;
 
 	DDRC |= (1<<PC2);
     menu[0].name = PSTR("Single Tone");
@@ -70,15 +77,23 @@ int main(void)
     ks0108Init();
     drehgeber_init();
 	ad9910_init();
+	uart_init(UART_BAUD_SELECT_DOUBLE_SPEED(UART_BAUDRATE, F_CPU));
     draw_page_header(&menu[menu_position]);
 	menu[menu_position].draw_func(&menu[menu_position]);
 
 	sei();
+	uart_puts("DDS\r\n");
 	
     while(1)
     {
     //draw_page_header(&menu[0]);
         //TODO:: Please write your application code 
+		if(uart_getc() == 'a'){
+			cli();
+			printBootloader();
+			wdt_enable(WDTO_15MS);
+			while(1);
+		}
         if((drehgeber_delta = drehgeber_read())){ // Drehgeber in action
 
             if(focus_here){
@@ -104,6 +119,7 @@ int main(void)
             if(menu[menu_position].taster_func){
                 focus_here = menu[menu_position].taster_func(&menu[menu_position],0);
             }
+			PORTF ^= (1<<PF3);
         }
         if(get_key_press(1<<KEY1)){ //button left +1
             if(menu[menu_position].taster_func){
@@ -114,23 +130,26 @@ int main(void)
             if(menu[menu_position].taster_func){
                 focus_here = menu[menu_position].taster_func(&menu[menu_position],2);
             }
+			uart_puts("DDS\r\n");
         }
         if(get_key_press(1<<KEY3)){ //button right
             if(menu[menu_position].taster_func){
                 focus_here = menu[menu_position].taster_func(&menu[menu_position],3);
             }
 			PORTA ^= (1<<OUTPUT_LED);
+			dds_power(on_off);
+			on_off ^= 1;
         }
         if(get_key_press(1<<KEY4)){ //button encoder
             if(menu[menu_position].taster_func){
                 focus_here = menu[menu_position].taster_func(&menu[menu_position],4);
             }
         }
-        if(refreshFlags & (1<<SEC_TENTH)){
+        if(refreshFlags & (1<<SEC_HALF)){
 			if(menu[menu_position].refresh_func){
-				menu[menu_position].refresh_func(&menu[menu_position],SEC_TENTH);
+				menu[menu_position].refresh_func(&menu[menu_position],SEC_HALF);
 			}
-            refreshFlags &= ~(1<<SEC_TENTH);
+            refreshFlags &= ~(1<<SEC_HALF);
         }
     }
 }
@@ -139,13 +158,13 @@ ISR(TIMER0_COMP_vect) // 1ms
 {
     cli();
 	uint8_t toggle = 0;
-    static uint16_t prescaler = 10000;
+    static uint16_t prescaler = 3000; // 5000 = 1s
     
     drehgeber_work();
 
     if(--prescaler == 0){
-        refreshFlags |= (1<<SEC_TENTH);
-        prescaler = 10000;
+        refreshFlags |= (1<<SEC_HALF);
+        prescaler = 1000;
     }else if(!(prescaler % 10)){ // 10ms
         buttons_every_10_ms();
     }

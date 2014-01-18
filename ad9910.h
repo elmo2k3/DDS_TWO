@@ -26,9 +26,10 @@
 #define PGA2 PG2
 #define PGA3 PG3
 
-void ad9910_init();
+void ad9910_init(void);
 void dds_set_single_tone_frequency(uint16_t amplitude, uint32_t frequency);
 void pga_set_gain(uint8_t gain);
+void dds_power(uint8_t on);
 
 #endif
 
