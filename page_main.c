@@ -3,6 +3,7 @@
 #include "ks0108/ks0108.h"
 #include "page_main.h"
 #include "page_misc.h"
+#include "page_graph.h"
 #include "ad9910.h"
 #include "adc.h"
 
@@ -22,6 +23,7 @@ static enum cursor_state{
 
 void page_main(struct menuitem *self){
 
+	clear_page_main();
 	printGain(0);
 	printFrequencyMhz();
 	printFrequencyKhz();

@@ -18,6 +18,7 @@
 #include "ks0108/ks0108.h"
 #include "page_misc.h"
 #include "page_main.h"
+#include "page_graph.h"
 #include "ad9910.h"
 #include "portbits.h"
 #include "uart.h"
@@ -28,7 +29,7 @@
 #define NUM_PAGES 6
 static struct menuitem menu[] = {
     {NULL,0, update_main, main_drehgeber, main_button_pressed, page_main},
-    {NULL,1, update_main, NULL, main_button_pressed, page_main},
+    {NULL,1, draw_graph, NULL, main_button_pressed, page_graph},
     {NULL,2, update_main, NULL, main_button_pressed, page_main},
     {NULL,3, update_main, NULL, main_button_pressed, page_main},
     {NULL,4, update_main, NULL, main_button_pressed, page_main},
@@ -67,7 +68,7 @@ int main(void)
 
 	DDRC |= (1<<PC2);
     menu[0].name = PSTR("Single Tone");
-    menu[1].name = PSTR("Linear Sweep");
+    menu[1].name = PSTR("Reflection");
     menu[2].name = PSTR("Settings");
     menu[3].name = PSTR("DDS TWO 2");
     menu[4].name = PSTR("DDS TWO 2");
