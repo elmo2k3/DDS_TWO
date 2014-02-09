@@ -1,0 +1,20 @@
+DDS_TWO 2014
+
+homerj00        <homerj00 at web.de>
+B.Biesenbach    <bjoern at bjoern-b.de>
+
+
+DDS_TWO is a 400MHz Function Generator that can also be used as a simple scalar network analyzer.
+The hardware consists of:
+- AD9910 DDS chip
+- ATMega128A
+- 128x64 GLCD
+- 3x LTC5507 RF level detector
+- FT232R USB communication
+
+The software uses libraries from:
+- kavr serial bootloader http://sourceforge.net/projects/kavr/
+- ape ks0108 glcd lib http://www.mikrocontroller.net/topic/ks0108-glcd-routinen
+- Peter Fleury UART lib http://homepage.hispeed.ch/peterfleury/
+- Peter Dannegger rotary encoder functions http://www.mikrocontroller.net/articles/Drehgeber
+

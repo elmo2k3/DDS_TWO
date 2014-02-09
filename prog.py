@@ -2,7 +2,7 @@
 import serial
 import time
 
-ser = serial.Serial(port='/dev/ttyUSB0',baudrate=115200,xonxoff=True);
+ser = serial.Serial(port='/dev/ttyUSB1',baudrate=115200,xonxoff=True);
 f = open('DDS_TWO.hex','r');
 a = f.read();
 ser.write('a');

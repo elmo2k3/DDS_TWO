@@ -1,0 +1,43 @@
+Bugs/Enhancements?
+==================
+
+kavr is open source software. It's licensed under GPL. The latest source 
+code is available on Sourceforge (http://kavr.sourceforge.net).
+Please report any problems or feedback any proposals for enhancement using
+the Sourceforge tracker system.
+
+
+Release 0.4 (09/17/2012)
+========================
+
+- Bugfix 3513394: Atmega644p (pagesize=256bytes). Thanks, fritzla!
+- Added UART definitions for architectures with multiple UARTs
+- Size reduction: loops, linker option (now at 492 bytes with Atmega8)
+
+
+Release 0.3 (06/29/2011)
+========================
+
+- Added watchdog reset as suggested by Michal. Thanks, Michal!
+- Bugfix makefile: linker flags were missing MCU definition. Thanks, Michal,
+  for reporting this issue!
+- Bugfix 3344043: Incorrect copying of FLASH to RAM. Thanks, Anonymous, 
+  for reporting this issue!
+- Now at 504 bytes with Atmega8
+
+
+Release 0.2 (12/01/2009)
+========================
+
+- Added FIFO extension proposed by Thomas Klickermann. Thanks, Thomas!
+- Added "KAVR" boot message after reset
+- Now sending XOFF before launching the application
+- Replaced stdlib init code with custom init code
+- Many changes all over the place for further reducing code size
+  (now at 498 bytes with Atmega8)
+
+
+Release 0.1 (9/26/2009)
+=======================
+
+- Initial alpha release

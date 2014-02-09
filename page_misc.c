@@ -42,19 +42,19 @@ void draw_page_header(struct menuitem *self){
     char *page_num;
 
     clear_page_header();
-    ks0108DrawCircle(7,7,7,BLACK);
-    ks0108DrawHoriLine(17,13,106,BLACK);
-    ks0108GotoXY(21,3);
+    //ks0108DrawCircle(7,7,7,BLACK);
+    ks0108DrawHoriLine(0,13,127,BLACK);
+    ks0108GotoXY(2,3);
     ks0108SelectFont(2,BLACK);
     ks0108Puts_P(self->name);
     ks0108SelectFont(1,BLACK);
-    if(self->num>8){
-        ks0108GotoXY(4,2);
-    }else{
-        ks0108GotoXY(6,2);
-    }
-    page_num = intToString(self->num+1,0);
-    ks0108Puts(page_num);
+    //if(self->num>8){
+    //    ks0108GotoXY(4,2);
+    //}else{
+    //    ks0108GotoXY(6,2);
+    //}
+    //page_num = intToString(self->num+1,0);
+    //ks0108Puts(page_num);
 
 }
 

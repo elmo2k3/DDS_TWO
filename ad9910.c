@@ -120,7 +120,7 @@ void ad9910_init()
 	
 	//SPI
 	SPCR |= (1<<SPE)|(1<<MSTR)|(1<<SPR1)|(1<<SPR0)|(0<<CPOL);
-	SPSR |= (1<<SPI2X);
+//	SPSR |= (1<<SPI2X);
 	
 	DDS_DO_RESET();
 

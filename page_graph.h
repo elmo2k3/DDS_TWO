@@ -5,7 +5,7 @@
 #include "DDS_TWO.h"
 
 void page_graph(struct menuitem *self);
-void draw_graph(void);
+void draw_graph(struct menuitem *self);
 
 #endif
 

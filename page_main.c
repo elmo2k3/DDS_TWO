@@ -21,21 +21,31 @@ static enum cursor_state{
 	STATE_GAIN
 };
 
-void page_main(struct menuitem *self){
+uint32_t getTcData(void){
+	
+	uint8_t i;
+	uint32_t data = 0;
 
-	clear_page_main();
-	printGain(0);
-	printFrequencyMhz();
-	printFrequencyKhz();
-    update_main(self,0);
-	dds_set_single_tone_frequency(10,frequency);
+	PORTF &= ~(1<<PF3);
+	for(i=0;i<4;i++){
+		SPDR = 0x00;
+		while(!(SPSR & (1<<SPIF))); // wait until transmission finished
+		data |= (uint32_t)SPDR<<((3-i)*8);
+	}
+
+	PORTF |= (1<<PF3);
+
+	return data;
 }
 
-void printForwardPower(){
+void printForwardPower(uint8_t update){
     char str[15];
 	static int16_t last_val = -1;
 	int16_t current_val;
 
+	if(update){
+		last_val = -1;
+	}
 	current_val = getPDValue(PD_FORWARD);
 
 	if(current_val != last_val){
@@ -50,11 +60,14 @@ void printForwardPower(){
 	last_val = current_val;
 }
 
-void printReflectPower(){
+void printReflectPower(uint8_t update){
     char str[15];
 	static int16_t last_val = -1;
 	int16_t current_val;
 
+	if(update){
+		last_val = -1;
+	}
 	current_val = getPDValue(PD_REFLECT);
 
 	if(current_val != last_val){
@@ -69,10 +82,13 @@ void printReflectPower(){
 	last_val = current_val;
 }
 
-void printTransmitPower(){
+void printTransmitPower(uint8_t update){
     char str[15];
 	static int16_t last_val = -1;
 	int16_t current_val;
+	if(update){
+		last_val = -1;
+	}
 
 	current_val = getPDValue(PD_TRANSMISSION);
 
@@ -144,6 +160,22 @@ void printFrequencyKhz(uint8_t toggle){
 	}
 }
 
+void page_main(struct menuitem *self){
+
+	clear_page_main();
+	printGain(1);
+	printGain(0);
+	printFrequencyMhz(1);
+	printFrequencyMhz(0);
+	printFrequencyKhz(1);
+	printFrequencyKhz(0);
+	printForwardPower(1);
+	printReflectPower(1);
+	printTransmitPower(1);
+	dds_set_single_tone_frequency(10,frequency);
+}
+
+
 void printBootloader(){
 	clear_page_main();
     ks0108SelectFont(3,BLACK);
@@ -154,10 +186,21 @@ void printBootloader(){
 void update_main(struct menuitem *self, uint8_t event){
 
     //clear_page_main();
+	//
+	uint32_t tcData;
+
+	//tcData = getTcData();
+
+	//frequency = (tcData>>4)&0xFFF;
+	//frequency = (tcData>>18)&0x3FFF;
+	//frequency = frequency *1000000/4;
 	
-	printForwardPower();
-	printReflectPower();
-	printTransmitPower();
+	//printFrequencyMhz(0);
+	//printFrequencyKhz(0);
+
+	printForwardPower(0);
+	printReflectPower(0);
+	printTransmitPower(0);
 	switch(state){
 		case STATE_FREQUENCY_MHZ:
 			printFrequencyMhz(toggle == 0);
@@ -180,7 +223,7 @@ void update_main(struct menuitem *self, uint8_t event){
 uint8_t main_button_pressed(struct menuitem *self, uint8_t button){
    
    	toggle = 0;
-	if(button == 1){
+	if(button == 4){
 		focus_not_here = 0;
 		if(state == STATE_IDLE){
 			state = STATE_FREQUENCY_MHZ;
@@ -190,11 +233,10 @@ uint8_t main_button_pressed(struct menuitem *self, uint8_t button){
 			state = STATE_GAIN;
 		}else if(state == STATE_GAIN){
 			state = STATE_IDLE;
+			focus_not_here = 1;
 		}
 	}else if(button == 2){
-		update_main(self,0);
 	}else if(button == 4){
-		focus_not_here ^= 1;
 	}
 
     return focus_not_here;

@@ -24,6 +24,7 @@
 #define PD_TRANSMISSION 2
 
 uint16_t getPDValue(uint8_t mux);
+void adcCalibOffset(void);
 
 #endif
 

@@ -19,6 +19,35 @@
 #include <avr/io.h>
 #include "adc.h"
 
+static uint16_t offset_reflect;
+static uint16_t offset_forward;
+static uint16_t offset_transmit;
+
+void adcCalibOffset(){
+	uint16_t min1,min2,min3;
+	uint16_t val;
+	uint8_t i;
+
+	offset_reflect = 0;
+	offset_forward = 0;
+	offset_transmit = 0;
+
+	min1 = 1025;
+	min2 = 1025;
+	min3 = 1025;
+
+	for(i=0;i<10;i++){
+		if((val = getPDValue(PD_REFLECT)) < min1)
+			min1 = val;
+		if((val = getPDValue(PD_FORWARD)) < min2)
+			min2 = val;
+		if((val = getPDValue(PD_TRANSMISSION)) < min3)
+			min3 = val;
+	}
+	offset_reflect = min1;
+	offset_forward = min2;
+	offset_transmit = min3;
+}
 
 uint16_t getPDValue(uint8_t mux)
 {
@@ -35,5 +64,13 @@ uint16_t getPDValue(uint8_t mux)
 
 	avg = ADC;
 	ADCSRA &= ~(1<<ADEN); //ADC disable for powersaving
+
+	if(mux == PD_REFLECT)
+		avg -= offset_reflect;
+	else if(mux == PD_FORWARD)
+		avg -= offset_forward;
+	else if(mux == PD_TRANSMISSION)
+		avg -= offset_transmit;
+
 	return avg;
 }

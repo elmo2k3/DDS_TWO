@@ -8,13 +8,13 @@
 #include "adc.h"
 
 void drawCoordinateSystem(void){
-    for(char counter=0;counter<25;counter++){
-        if(counter == 12)
-            ks0108DrawLine(7+counter*5,58,7+counter*5,63, BLACK);
-        else
-            ks0108DrawLine(7+counter*5,60,7+counter*5,63, BLACK);
+    for(char counter=0;counter<26;counter++){
+//        if(counter == 12)
+//            ks0108DrawLine(7+counter*5,58,7+counter*5,63, BLACK);
+//        else
+            ks0108DrawLine(counter*5+1,60,counter*5+1,63, BLACK);
     }
-    ks0108DrawHoriLine(5,60,122,BLACK);
+    ks0108DrawHoriLine(1,60,125,BLACK);
     //ks0108DrawHoriLine(13,20,3,BLACK);
     //ks0108DrawHoriLine(13,40,3,BLACK);
     //ks0108DrawHoriLine(124,40,3,BLACK);
@@ -52,10 +52,11 @@ void drawYLegend(int temp_max, int temp_min){
     ks0108Puts(buf);    
 }
 
-void draw_graph(){
+void draw_graph(struct menuitem *self){
     int y1,y2;
     int temp_max,temp_min;
     uint16_t power_val;
+    uint16_t power_val_last;
     
     //clearGraph();
     drawCoordinateSystem();
@@ -63,11 +64,21 @@ void draw_graph(){
     temp_max = 10;
     temp_min = 0;
 
-    for(uint8_t i=0;i<128;i++){
+    for(uint8_t i=0;i<126;i++){
         dds_set_single_tone_frequency(10,(i*2+1)*1e6);
-        power_val = getPDValue(PD_REFLECT) - 60;
-        ks0108FillRect(i, 20, 1, 39, WHITE);
-        ks0108SetDot(i,60-power_val/2,BLACK);
+        //dds_set_single_tone_frequency(10,(i*4e3+15.8*1e6));
+        if(self->num == 2){
+            power_val = getPDValue(PD_REFLECT);
+        }else if(self->num == 3){
+            power_val = getPDValue(PD_TRANSMISSION);
+        }
+        ks0108FillRect(i+1, 15, 1, 44, WHITE);
+        if(i == 0){
+            ks0108SetDot(i+1,60-power_val/2,BLACK);
+        }else{
+            ks0108DrawLine(i,60-power_val_last/2,i+1,60-power_val/2,BLACK);
+        }
+        power_val_last = power_val;
     }
     
 //    for(uint8_t counter=0;counter<graphData.numberOfPoints;counter++){
@@ -81,6 +92,6 @@ void draw_graph(){
 
 void page_graph(struct menuitem *self){
     clear_page_main();
-    draw_graph();
+    draw_graph(self);
 }
 
