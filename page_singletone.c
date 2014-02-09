@@ -21,7 +21,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "ks0108/ks0108.h"
-#include "page_main.h"
+#include "page_singletone.h"
 #include "page_misc.h"
 #include "page_graph.h"
 #include "ad9910.h"
@@ -187,7 +187,7 @@ void printFrequencyKhz(uint8_t toggle)
     }
 }
 
-void page_main(struct menuitem *self)
+void page_singletone(struct menuitem *self)
 {
 
     clear_page_main();
@@ -212,10 +212,10 @@ void printBootloader()
     ks0108Puts_P(PSTR("Bootloader.."));
 }
 
-void update_main(struct menuitem *self, uint8_t event)
+void update_singletone(struct menuitem *self, uint8_t event)
 {
 
-    //clear_page_main();
+    //clear_page_singletone();
     //
     uint32_t tcData;
 
@@ -250,7 +250,7 @@ void update_main(struct menuitem *self, uint8_t event)
         toggle = 0;
 }
 
-uint8_t main_button_pressed(struct menuitem *self, uint8_t button)
+uint8_t singletone_button_pressed(struct menuitem *self, uint8_t button)
 {
 
     toggle = 0;
@@ -273,7 +273,7 @@ uint8_t main_button_pressed(struct menuitem *self, uint8_t button)
     return focus_not_here;
 }
 
-void main_drehgeber(struct menuitem *self, int8_t steps)
+void singletone_drehgeber(struct menuitem *self, int8_t steps)
 {
 
     switch (state) {

@@ -30,7 +30,7 @@
 #include "drehgeber.h"
 #include "ks0108/ks0108.h"
 #include "page_misc.h"
-#include "page_main.h"
+#include "page_singletone.h"
 #include "page_graph.h"
 #include "ad9910.h"
 #include "portbits.h"
@@ -39,14 +39,11 @@
 #define OUTPUT_LED PA4
 #define UART_BAUDRATE 115200
 
-#define NUM_PAGES 4
+#define NUM_PAGES 3
 static struct menuitem menu[] = {
-    {NULL, 0, update_main, main_drehgeber, main_button_pressed, page_main},
-    {NULL, 1, update_main, NULL, main_button_pressed, page_main},
-    {NULL, 2, draw_graph, NULL, main_button_pressed, page_graph},
-    {NULL, 3, draw_graph, NULL, main_button_pressed, page_graph},
-    {NULL, 4, update_main, NULL, main_button_pressed, page_main},
-    {NULL, 5, update_main, NULL, main_button_pressed, page_main}
+    {NULL, 0, update_singletone, singletone_drehgeber, singletone_button_pressed, page_singletone},
+    {NULL, 1, draw_graph, NULL, NULL, page_graph},
+    {NULL, 2, draw_graph, NULL, NULL, page_graph}
 };
 
 uint8_t refreshFlags;

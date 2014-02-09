@@ -1,2 +1,2 @@
 #!/bin/bash
-make && ./prog.py
+make && ./prog.py $1
