@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2013 Bjoern Biesenbach <bjoern@bjoern-b.de>
+ * Copyright (C) 2014 Bjoern Biesenbach <bjoern at bjoern-b.de>
+ *               2014 homerj00			<homerj00 at web.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,6 +17,7 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #ifndef __ADC_H__
 #define __ADC_H__
 
@@ -23,8 +25,7 @@
 #define PD_FORWARD 1
 #define PD_TRANSMISSION 2
 
-uint16_t getPDValue(uint8_t mux);
-void adcCalibOffset(void);
+uint16_t getPDValue (uint8_t mux);
+void adcCalibOffset (void);
 
 #endif
-

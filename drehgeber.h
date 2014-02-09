@@ -11,7 +11,7 @@
 #define PHASE_A (PINA & 1<<DREHGEBER_A)
 
 void drehgeber_init(void);
-void drehgeber_work(void); //call every 1ms
-int8_t drehgeber_read(void); // read four step encoders
+void drehgeber_work(void);      //call every 1ms
+int8_t drehgeber_read(void);    // read four step encoders
 
 #endif

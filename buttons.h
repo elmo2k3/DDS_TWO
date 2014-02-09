@@ -12,12 +12,11 @@
 #define KEY4    PA5
 
 #define REPEAT_MASK 0
-#define REPEAT_START 50 // 500ms
-#define REPEAT_NEXT 20 // 200ms
+#define REPEAT_START 50         // 500ms
+#define REPEAT_NEXT 20          // 200ms
 
 void buttons_every_10_ms(void);
 uint8_t get_key_press(uint8_t key_mask);
 uint8_t get_key_rpt(uint8_t key_mask);
 
 #endif
-
