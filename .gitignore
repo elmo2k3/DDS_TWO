@@ -11,3 +11,4 @@ TEST
 *.map
 *.sym
 *.logicdata
+*.*~

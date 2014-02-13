@@ -42,54 +42,30 @@ void drawCoordinateSystem(void)
     //ks0108DrawHoriLine(124,40,3,BLACK);
 }
 
-void drawMinMaxTemps(void)
-{
-    char *buf;
-    ks0108GotoXY(100, 16);
-    buf = intToString(1, 0);
-    ks0108Puts(buf);
-    ks0108Puts(".");
-    buf = intToString(1, 0);
-    ks0108Puts(buf);
-    ks0108Puts("C");
-    ks0108GotoXY(100, 26);
-    buf = intToString(1, 0);
-    ks0108Puts(buf);
-    ks0108Puts(".");
-    buf = intToString(1, 0);
-    ks0108Puts(buf);
-    ks0108Puts("C");
-}
-
 void clearGraph(void)
 {
     ks0108FillRect(0, 20, 127, 43, WHITE);
 }
 
-void drawYLegend(int temp_max, int temp_min)
+void drawXLegend()
 {
     char *buf;
-    ks0108GotoXY(1, 47);
-    buf = intToString(temp_min, 0);
+    ks0108GotoXY(1, 57);
+    buf = intToString(settings.graph_settings.lower_frequency/1000000ul, 0);
     ks0108Puts(buf);
-    ks0108GotoXY(1, 19);
-    buf = intToString(temp_max, 0);
+    ks0108GotoXY(120, 57);
+    buf = intToString(settings.graph_settings.upper_frequency/1000000ul, 0);
     ks0108Puts(buf);
 }
 
 void draw_graph(struct menuitem *self)
 {
     int y1, y2;
-    int temp_max, temp_min;
     uint16_t power_val;
     uint16_t power_val_last;
     uint32_t frequency,f_step;
 
-    //clearGraph();
     drawCoordinateSystem();
-    //drawMinMaxTemps();
-    temp_max = 10;
-    temp_min = 0;
 
     f_step = (settings.graph_settings.upper_frequency -
                 settings.graph_settings.lower_frequency) / 126ul;
@@ -111,14 +87,7 @@ void draw_graph(struct menuitem *self)
         }
         power_val_last = power_val;
     }
-
-//    for(uint8_t counter=0;counter<graphData.numberOfPoints;counter++){
-//        y1 = graphData.temperature_history[counter-1];
-//        y2 = graphData.temperature_history[counter];
-//        if(counter!=0)
-//            ks0108DrawLine(7+counter,60-y1,8+counter,60-y2,BLACK);
-//    }
-    //drawYLegend(temp_max,temp_min);
+    //drawXLegend();
 }
 
 void page_graph(struct menuitem *self)
