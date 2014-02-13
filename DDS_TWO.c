@@ -40,11 +40,12 @@
 
 #define UART_BAUDRATE 115200
 
-#define NUM_PAGES 3
+#define NUM_PAGES 4
 static struct menuitem menu[] = {
     {NULL, 0, update_singletone, singletone_drehgeber, singletone_button_pressed, page_singletone},
     {NULL, 1, NULL, settings_drehgeber, settings_button_pressed, page_settings},
-    {NULL, 2, draw_graph, NULL, NULL, page_graph}
+    {NULL, 2, draw_graph, NULL, NULL, page_graph},
+    {NULL, 3, draw_graph, NULL, NULL, page_graph}
 };
 
 uint8_t refreshFlags;
