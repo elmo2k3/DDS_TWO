@@ -75,7 +75,7 @@ void printForwardPower(uint8_t update)
         sprintf(str, "%d", current_val);
         ks0108SelectFont(1, BLACK);
         ks0108GotoXY(0, 17);
-        ks0108Puts_P(PSTR("FORWARD"));
+        ks0108Puts_P(PSTR("Forward"));
         ks0108GotoXY(60, 17);
         ks0108Puts(str);
     }
@@ -98,7 +98,7 @@ void printReflectPower(uint8_t update)
         sprintf(str, "%d", current_val);
         ks0108SelectFont(1, BLACK);
         ks0108GotoXY(0, 17 + 10);
-        ks0108Puts_P(PSTR("REVERSE"));
+        ks0108Puts_P(PSTR("Reverse"));
         ks0108GotoXY(60, 17 + 10);
         ks0108Puts(str);
     }
@@ -121,7 +121,7 @@ void printTransmitPower(uint8_t update)
         sprintf(str, "%d", current_val);
         ks0108SelectFont(1, BLACK);
         ks0108GotoXY(0, 17 + 20);
-        ks0108Puts_P(PSTR("TRANS"));
+        ks0108Puts_P(PSTR("Received"));
         ks0108GotoXY(60, 17 + 20);
         ks0108Puts(str);
     }

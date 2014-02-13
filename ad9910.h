@@ -45,6 +45,7 @@
 #define PGA1 PG1
 #define PGA2 PG2
 #define PGA3 PG3
+#define OUTPUT_LED PA4
 
 void ad9910_init(void);
 void dds_set_single_tone_frequency(uint16_t amplitude, uint32_t frequency);

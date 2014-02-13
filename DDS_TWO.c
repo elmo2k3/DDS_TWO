@@ -32,17 +32,18 @@
 #include "page_misc.h"
 #include "page_singletone.h"
 #include "page_graph.h"
+#include "page_settings.h"
 #include "ad9910.h"
 #include "portbits.h"
 #include "uart.h"
+#include "settings.h"
 
-#define OUTPUT_LED PA4
 #define UART_BAUDRATE 115200
 
 #define NUM_PAGES 3
 static struct menuitem menu[] = {
     {NULL, 0, update_singletone, singletone_drehgeber, singletone_button_pressed, page_singletone},
-    {NULL, 1, draw_graph, NULL, NULL, page_graph},
+    {NULL, 1, NULL, settings_drehgeber, settings_button_pressed, page_settings},
     {NULL, 2, draw_graph, NULL, NULL, page_graph}
 };
 
@@ -51,8 +52,6 @@ uint8_t refreshFlags;
 #define SEC_HALF 0
 void io_init(void)
 {
-    // LED off
-    DDRA = (1 << OUTPUT_LED);
     // PULLUPS
     PORTA = (1 << KEY0) | (1 << KEY1) | (1 << KEY2) | (1 << KEY3) | (1 <<KEY4);
     PORTA |= (1 << DREHGEBER_A) | (1 << DREHGEBER_B);
@@ -131,9 +130,8 @@ int main(void)
                     menu[menu_position].taster_func(&menu[menu_position],
                                                     0);
             }
-            PORTA ^= (1 << OUTPUT_LED);
-            dds_power(on_off);
-            on_off ^= 1;
+            settings.output_active ^= 1;
+            dds_power(settings.output_active);
         }
         if (get_key_press(1 << KEY1)) { //button left +1
             if (menu[menu_position].taster_func) {

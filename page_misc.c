@@ -98,6 +98,8 @@ void draw_settings_line(PGM_P name, char *value, uint8_t position)
     ks0108Puts_P(name);
     ks0108FillRect(100, 17 + position * 11, 27, 10, WHITE);
     ks0108GotoXY(100, 17 + position * 11);
+    //ks0108FillRect(100, 17 + position * 11, 27, 10, WHITE);
+    //ks0108GotoXY(100, 17 + position * 11);
     ks0108Puts(value);
 }
 

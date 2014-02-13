@@ -27,4 +27,12 @@
 void page_graph(struct menuitem *self);
 void draw_graph(struct menuitem *self);
 
+struct page_graph_settings
+{
+    uint32_t lower_frequency;
+    uint32_t upper_frequency;
+    uint32_t frequency_step;
+    uint8_t power;
+};
+
 #endif

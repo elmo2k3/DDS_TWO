@@ -475,17 +475,16 @@ void ks0108Init() {
 }
 
 void ks0108Enable(void) {
-	//_delay_us(5);
 	LCD_CMD_PORT |= 0x01 << EN;						// EN high level width: min. 450ns
 	asm volatile("nop\n\t"
+				 "nop\n\t"
 				 "nop\n\t"
 				 "nop\n\t"
 				 "nop\n\t"
 				 ::);
 	//_delay_us(2);
 	LCD_CMD_PORT &= ~(0x01 << EN);
-	for(volatile uint8_t i=0; i<12; i++);			// a little delay loop (faster than reading the busy flag)
-	//_delay_us(5);
+	for(volatile uint8_t i=0; i<24; i++);			// a little delay loop (faster than reading the busy flag)
 }
 
 uint8_t ks0108DoReadData(uint8_t first) {
@@ -510,6 +509,7 @@ uint8_t ks0108DoReadData(uint8_t first) {
 	
 	LCD_CMD_PORT |= 0x01 << EN;						// EN high level width: min. 450ns
 	asm volatile("nop\n\t"
+				 "nop\n\t"
 				 "nop\n\t"
 				 "nop\n\t"
 				 "nop\n\t"

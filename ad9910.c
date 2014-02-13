@@ -20,6 +20,7 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include "settings.h"
 #include "ad9910.h"
 
 #define DDS_REGISTER_CFR1 0x00
@@ -120,10 +121,17 @@ static void dds_cmd_64(uint8_t address, uint8_t read_access,
     dds_cmd(address, read_access, values, size);
 }
 
-void dds_power(uint8_t off)
+void dds_power(uint8_t on)
 {
-    dds_cmd_32(DDS_REGISTER_CFR1, 0, (off << DDS_POWER_DOWN),
-               DDS_REGISTER_CFR1_LENGTH);
+    if(!on){ // off
+        PORTA &= ~(1 << OUTPUT_LED);
+        dds_cmd_32(DDS_REGISTER_CFR1, 0, (1 << DDS_POWER_DOWN),
+                   DDS_REGISTER_CFR1_LENGTH);
+    }else{ // on
+        PORTA |= (1 << OUTPUT_LED);
+        dds_cmd_32(DDS_REGISTER_CFR1, 0, (0 << DDS_POWER_DOWN),
+                   DDS_REGISTER_CFR1_LENGTH);
+    }
     DDS_DO_IOUPDATE();
 }
 
@@ -147,6 +155,8 @@ void ad9910_init()
 
     DDRG = (1 << PGA0) | (1 << PGA1) | (1 << PGA2) | (1 << PGA3);
     PORTG = (0 << PGA0) | (1 << PGA1) | (0 << PGA2) | (1 << PGA3);
+    // LED
+    DDRA = (1 << OUTPUT_LED);
 
     //SPI
     SPCR |=
@@ -159,13 +169,17 @@ void ad9910_init()
                PLL_N(40) | PLL_ENABLE | REFCLK_IN_DIV_RESET_B | PLL_DRV0(1)
                | PLL_VCO_SEL(5) | PLL_ICP(3), DDS_REGISTER_CFR3_LENGTH);
     DDS_DO_IOUPDATE();
-    dds_power(1);
+    dds_power(0);
 }
 
 void dds_set_single_tone_frequency(uint16_t amplitude, uint32_t frequency)
 {
     uint64_t val;
     uint16_t phase = 0;
+
+    if(!settings.output_active){
+        return;
+    }
 
     val =
         ((uint64_t) amplitude & 0x3FFF) << 48 | (uint64_t) phase << 32 |

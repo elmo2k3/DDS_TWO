@@ -26,6 +26,7 @@
 #include "page_graph.h"
 #include "ad9910.h"
 #include "adc.h"
+#include "settings.h"
 
 void drawCoordinateSystem(void)
 {
@@ -82,6 +83,7 @@ void draw_graph(struct menuitem *self)
     int temp_max, temp_min;
     uint16_t power_val;
     uint16_t power_val_last;
+    uint32_t frequency,f_step;
 
     //clearGraph();
     drawCoordinateSystem();
@@ -89,9 +91,12 @@ void draw_graph(struct menuitem *self)
     temp_max = 10;
     temp_min = 0;
 
+    f_step = (settings.graph_settings.upper_frequency -
+                settings.graph_settings.lower_frequency) / 126ul;
+
     for (uint8_t i = 0; i < 126; i++) {
-        dds_set_single_tone_frequency(10, (i * 2 + 1) * 1e6);
-        //dds_set_single_tone_frequency(10,(i*4e3+15.8*1e6));
+        frequency = settings.graph_settings.lower_frequency + f_step*i;
+        dds_set_single_tone_frequency(10, frequency);
         if (self->num == 2) {
             power_val = getPDValue(PD_REFLECT);
         } else if (self->num == 3) {

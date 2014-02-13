@@ -29,4 +29,10 @@ uint8_t singletone_button_pressed(struct menuitem *self, uint8_t button);
 void singletone_drehgeber(struct menuitem *self, int8_t steps);
 void printBootloader(void);
 
+struct page_singletone_settings
+{
+    uint32_t frequency;
+    uint8_t power;
+};
+
 #endif
