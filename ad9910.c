@@ -177,10 +177,6 @@ void dds_set_single_tone_frequency(uint16_t amplitude, uint32_t frequency)
     uint64_t val;
     uint16_t phase = 0;
 
-    if(!settings.output_active){
-        return;
-    }
-
     val =
         ((uint64_t) amplitude & 0x3FFF) << 48 | (uint64_t) phase << 32 |
         (uint32_t) (((double) frequency * FREQUENCY_FACTOR));

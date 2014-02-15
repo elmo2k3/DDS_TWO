@@ -28,6 +28,14 @@
 #include "adc.h"
 #include "settings.h"
 
+void page_graph_settings_init()
+{
+    settings.graph_settings.lower_frequency = 1e3;
+    settings.graph_settings.upper_frequency = 10e6;
+    settings.graph_settings.power = 8;
+    settings.graph_settings.frequency_step = 0; // auto calculated anyway
+}
+
 void drawCoordinateSystem(void)
 {
     for (char counter = 0; counter < 26; counter++) {

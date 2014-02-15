@@ -35,4 +35,6 @@ struct page_graph_settings
     uint8_t power;
 };
 
+void page_graph_settings_init(void);
+
 #endif

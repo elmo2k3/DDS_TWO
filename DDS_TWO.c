@@ -80,6 +80,7 @@ int main(void)
     menu[4].name = PSTR("DDS TWO 2");
     menu[5].name = PSTR("DDS TWO 2");
 
+    settings_init();
     io_init();
     ks0108Init();
     drehgeber_init();

@@ -55,6 +55,7 @@ void draw_frequency_stop()
 void page_settings(struct menuitem *self)
 {
     clear_page_main();
+    ks0108SelectFont(1, BLACK);
     draw_frequency_start();
     draw_frequency_stop();
 }
@@ -93,6 +94,8 @@ void settings_drehgeber(struct menuitem *self, int8_t steps)
             settings.graph_settings.lower_frequency = 0;
         if (settings.graph_settings.lower_frequency > 500000000)
             settings.graph_settings.lower_frequency = 500000000;
+        if (settings.graph_settings.lower_frequency > settings.graph_settings.upper_frequency)
+            settings.graph_settings.lower_frequency = settings.graph_settings.upper_frequency;
         draw_frequency_start();
         break;
     case STATE_FREQUENCY_STOP:
@@ -101,6 +104,8 @@ void settings_drehgeber(struct menuitem *self, int8_t steps)
             settings.graph_settings.lower_frequency = 0;
         if (settings.graph_settings.lower_frequency > 500000000)
             settings.graph_settings.lower_frequency = 500000000;
+        if (settings.graph_settings.upper_frequency < settings.graph_settings.lower_frequency)
+            settings.graph_settings.upper_frequency = settings.graph_settings.lower_frequency;
         draw_frequency_stop();
         break;
     }

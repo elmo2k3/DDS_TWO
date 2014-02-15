@@ -26,13 +26,18 @@
 #include "page_graph.h"
 #include "ad9910.h"
 #include "adc.h"
+#include "settings.h"
 
 static uint8_t focus_not_here = 1;
 static uint8_t state;
 
-uint32_t frequency = 50000000;
-int8_t gain = 8;
 static uint8_t toggle = 0;
+
+void page_singletone_settings_init()
+{
+    settings.singletone_settings.frequency = 10e6;
+    settings.singletone_settings.gain = 8;
+}
 
 static enum cursor_state {
     STATE_IDLE,
@@ -133,13 +138,13 @@ void printGain(uint8_t toggle)
     char str[15];
     static uint8_t gain_last = 16;
 
-    if (gain != gain_last) {
-        sprintf(str, "v = %02d", gain);
+    if (settings.singletone_settings.gain != gain_last) {
+        sprintf(str, "v = %02d", settings.singletone_settings.gain);
         ks0108SelectFont(3, BLACK);
         ks0108FillRect(93, 28, 34, 20, WHITE);
         ks0108GotoXY(85, 28);
         ks0108Puts(str);
-        gain_last = gain;
+        gain_last = settings.singletone_settings.gain;
     } else if (toggle) {
         ks0108FillRect(106, 28, 21, 20, WHITE);
         gain_last = 16;
@@ -152,14 +157,14 @@ void printFrequencyMhz(uint8_t toggle)
     uint32_t mhz;
     static uint32_t frequency_last = 500000001;
 
-    if (frequency != frequency_last) {
-        mhz = frequency / 1000000ul;
+    if (settings.singletone_settings.frequency != frequency_last) {
+        mhz = settings.singletone_settings.frequency / 1000000ul;
         sprintf(str, "f = %03ld", mhz);
         ks0108SelectFont(3, BLACK);
         ks0108FillRect(12, 48, 33, 20, WHITE);
         ks0108GotoXY(12, 48);
         ks0108Puts(str);
-        frequency_last = frequency;
+        frequency_last = settings.singletone_settings.frequency;
     } else if (toggle) {
         ks0108FillRect(25, 48, 33, 20, WHITE);
         frequency_last = 500000001;
@@ -172,15 +177,15 @@ void printFrequencyKhz(uint8_t toggle)
     uint32_t mhz, khz;
     static uint32_t frequency_last = 500000001;
 
-    if (frequency != frequency_last) {
-        mhz = frequency / 1000000ul;
-        khz = (frequency - mhz * 1000000ul) / 1000ul;
+    if (settings.singletone_settings.frequency != frequency_last) {
+        mhz = settings.singletone_settings.frequency / 1000000ul;
+        khz = (settings.singletone_settings.frequency - mhz * 1000000ul) / 1000ul;
         sprintf(str, ".%03ldMHz", khz);
         ks0108SelectFont(3, BLACK);
         ks0108FillRect(60, 48, 66, 20, WHITE);
         ks0108GotoXY(60, 48);
         ks0108Puts(str);
-        frequency_last = frequency;
+        frequency_last = settings.singletone_settings.frequency;
     } else if (toggle) {
         ks0108FillRect(60, 48, 66, 20, WHITE);
         frequency_last = 500000001;
@@ -200,7 +205,7 @@ void page_singletone(struct menuitem *self)
     printForwardPower(1);
     printReflectPower(1);
     printTransmitPower(1);
-    dds_set_single_tone_frequency(10, frequency);
+    dds_set_single_tone_frequency(10, settings.singletone_settings.frequency);
 }
 
 
@@ -278,30 +283,30 @@ void singletone_drehgeber(struct menuitem *self, int8_t steps)
 
     switch (state) {
     case STATE_GAIN:
-        gain += steps;
-        if (gain < 0)
-            gain = 0;
-        if (gain > 15)
-            gain = 15;
-        pga_set_gain(gain);
+        settings.singletone_settings.gain += steps;
+        if (settings.singletone_settings.gain < 0)
+            settings.singletone_settings.gain = 0;
+        if (settings.singletone_settings.gain > 15)
+            settings.singletone_settings.gain = 15;
+        pga_set_gain(settings.singletone_settings.gain);
         printGain(0);
         break;
     case STATE_FREQUENCY_MHZ:
-        frequency += (uint32_t) steps *1000ul * 1000ul;
-        if (frequency > 1000000000)
-            frequency = 0;
-        if (frequency > 500000000)
-            frequency = 500000000;
-        dds_set_single_tone_frequency(10, frequency);
+        settings.singletone_settings.frequency += (uint32_t) steps *1000ul * 1000ul;
+        if (settings.singletone_settings.frequency > 1000000000)
+            settings.singletone_settings.frequency = 0;
+        if (settings.singletone_settings.frequency > 500000000)
+            settings.singletone_settings.frequency = 500000000;
+        dds_set_single_tone_frequency(10, settings.singletone_settings.frequency);
         printFrequencyMhz(0);
         break;
     case STATE_FREQUENCY_KHZ:
-        frequency += (uint32_t) steps *1000ul;
-        if (frequency > 1000000000)
-            frequency = 0;
-        if (frequency > 500000000)
-            frequency = 500000000;
-        dds_set_single_tone_frequency(10, frequency);
+        settings.singletone_settings.frequency += (uint32_t) steps *1000ul;
+        if (settings.singletone_settings.frequency > 1000000000)
+            settings.singletone_settings.frequency = 0;
+        if (settings.singletone_settings.frequency > 500000000)
+            settings.singletone_settings.frequency = 500000000;
+        dds_set_single_tone_frequency(10, settings.singletone_settings.frequency);
         printFrequencyKhz(0);
         break;
     }
