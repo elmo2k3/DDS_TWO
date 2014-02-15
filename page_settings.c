@@ -36,7 +36,7 @@ static enum cursor_state {
     STATE_FREQUENCY_STOP
 };
 
-void draw_frequency_start()
+void draw_frequency_start(void)
 {
     char f_val[10];
 
@@ -44,7 +44,7 @@ void draw_frequency_start()
     draw_settings_line(PSTR("F_Start [MHz]"),f_val,0);
 }
 
-void draw_frequency_stop()
+void draw_frequency_stop(void)
 {
     char f_val[10];
 

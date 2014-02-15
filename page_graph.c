@@ -30,7 +30,7 @@
 
 void page_graph_settings_init()
 {
-    settings.graph_settings.lower_frequency = 1e3;
+    settings.graph_settings.lower_frequency = 1e6;
     settings.graph_settings.upper_frequency = 10e6;
     settings.graph_settings.power = 8;
     settings.graph_settings.frequency_step = 0; // auto calculated anyway
@@ -38,16 +38,13 @@ void page_graph_settings_init()
 
 void drawCoordinateSystem(void)
 {
-    for (char counter = 0; counter < 26; counter++) {
-//        if(counter == 12)
-//            ks0108DrawLine(7+counter*5,58,7+counter*5,63, BLACK);
-//        else
-        ks0108DrawLine(counter * 5 + 1, 60, counter * 5 + 1, 63, BLACK);
+    //for (char counter = 0; counter < 26; counter++) {
+    //    ks0108DrawLine(counter * 5 + 1, 60, counter * 5 + 1, 63, BLACK);
+    //}
+    for (char counter = 0; counter < 11; counter++) {
+        ks0108DrawLine(counter * 12+4, 60, counter * 12+4, 63, BLACK);
     }
-    ks0108DrawHoriLine(1, 60, 125, BLACK);
-    //ks0108DrawHoriLine(13,20,3,BLACK);
-    //ks0108DrawHoriLine(13,40,3,BLACK);
-    //ks0108DrawHoriLine(124,40,3,BLACK);
+    ks0108DrawHoriLine(4, 60, 120, BLACK);
 }
 
 void clearGraph(void)
@@ -66,19 +63,18 @@ void drawXLegend()
     ks0108Puts(buf);
 }
 
-void draw_graph(struct menuitem *self)
+void draw_graph(struct menuitem *self,uint8_t event)
 {
-    int y1, y2;
-    uint16_t power_val;
+    uint16_t power_val = 0;
     uint16_t power_val_last;
     uint32_t frequency,f_step;
 
     drawCoordinateSystem();
 
     f_step = (settings.graph_settings.upper_frequency -
-                settings.graph_settings.lower_frequency) / 126ul;
+                settings.graph_settings.lower_frequency) / 120ul;
 
-    for (uint8_t i = 0; i < 126; i++) {
+    for (uint8_t i = 0; i < 120; i++) {
         frequency = settings.graph_settings.lower_frequency + f_step*i;
         dds_set_single_tone_frequency(10, frequency);
         if (self->num == 2) {
@@ -86,11 +82,12 @@ void draw_graph(struct menuitem *self)
         } else if (self->num == 3) {
             power_val = getPDValue(PD_TRANSMISSION);
         }
-        ks0108FillRect(i + 1, 15, 1, 44, WHITE);
         if (i == 0) {
-            ks0108SetDot(i + 1, 60 - power_val / 2, BLACK);
+            ks0108FillRect(i + 4, 15, 1, 44, WHITE);
+            ks0108SetDot(i + 4, 60 - power_val / 2, BLACK);
         } else {
-            ks0108DrawLine(i, 60 - power_val_last / 2, i + 1,
+            ks0108FillRect(i + 5, 15, 1, 44, WHITE);
+            ks0108DrawLine(i+4, 60 - power_val_last / 2, i + 5,
                            60 - power_val / 2, BLACK);
         }
         power_val_last = power_val;
@@ -101,5 +98,5 @@ void draw_graph(struct menuitem *self)
 void page_graph(struct menuitem *self)
 {
     clear_page_main();
-    draw_graph(self);
+    draw_graph(self,0);
 }

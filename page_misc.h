@@ -23,6 +23,7 @@
 
 #include <avr/pgmspace.h>
 #include <inttypes.h>
+#include "DDS_TWO.h"
 
 
 void clear_page_header(void);

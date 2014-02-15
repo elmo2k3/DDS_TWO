@@ -37,6 +37,7 @@
 #include "portbits.h"
 #include "uart.h"
 #include "settings.h"
+#include "adc.h"
 
 #define UART_BAUDRATE 115200
 
@@ -69,16 +70,11 @@ int main(void)
     int8_t menu_position = 0;
     int8_t old_menu_position = 0;
     uint8_t focus_here = 1;
-    void (*reset) (void) = 0x0;
-    void (*bootloader) (void) = 0x1f800;
-    uint8_t on_off = 0;
 
     menu[0].name = PSTR("Single Tone");
     menu[1].name = PSTR("Sweep settings");
     menu[2].name = PSTR("Reflection");
     menu[3].name = PSTR("Transmission");
-    menu[4].name = PSTR("DDS TWO 2");
-    menu[5].name = PSTR("DDS TWO 2");
 
     settings_init();
     io_init();
@@ -141,7 +137,6 @@ int main(void)
                     menu[menu_position].taster_func(&menu[menu_position],
                                                     1);
             }
-            adcCalibOffset();
         }
         if (get_key_press(1 << KEY2)) { //button right -1
             if (menu[menu_position].taster_func) {

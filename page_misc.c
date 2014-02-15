@@ -21,6 +21,7 @@
 #include <string.h>
 #include "DDS_TWO.h"
 #include "ks0108/ks0108.h"
+#include "page_misc.h"
 
 char *intToString(int8_t value, uint8_t one_leading_zero)
 {
@@ -63,8 +64,6 @@ void clear_page_header()
 
 void draw_page_header(struct menuitem *self)
 {
-    char *page_num;
-
     clear_page_header();
     //ks0108DrawCircle(7,7,7,BLACK);
     ks0108DrawHoriLine(0, 13, 127, BLACK);
@@ -93,7 +92,6 @@ void draw_arrow(uint8_t x, uint8_t y)
 
 void draw_settings_line(PGM_P name, char *value, uint8_t position)
 {
-    char buf[6];
     ks0108GotoXY(2, 17 + position * 11);
     ks0108Puts_P(name);
     ks0108FillRect(100, 17 + position * 11, 27, 10, WHITE);
@@ -106,7 +104,6 @@ void draw_settings_line(PGM_P name, char *value, uint8_t position)
 void draw_settings_line_variable_space(PGM_P name, char *value,
                                        uint8_t position, uint8_t space)
 {
-    char buf[6];
     ks0108GotoXY(2, 17 + position * 11);
     ks0108Puts_P(name);
     ks0108FillRect(space, 17 + position * 11, 27, 10, WHITE);
