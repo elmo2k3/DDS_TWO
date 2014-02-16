@@ -47,7 +47,6 @@
 
 #define DDS_CS_SET() 	DDS_PORT0 |= (1<<DDS_CS);
 #define DDS_CS_CLR() 	DDS_PORT0 &= ~(1<<DDS_CS);
-#define DDS_DO_RESET()		DDS_PORT0 |= (1<<DDS_MASTER_RESET); _delay_ms(1); DDS_PORT0 &= ~(1<<DDS_MASTER_RESET);
 #define DDS_DO_IOUPDATE()	DDS_PORT0 |= (1<<DDS_IO_UPDATE); DDS_PORT0 &= ~(1<<DDS_IO_UPDATE);
 
 //#define FREQUENCY_FACTOR 2235 // divide by 10000
@@ -82,6 +81,7 @@ static void dds_cmd(uint8_t address, uint8_t read_access, uint8_t * values,
     uint32_t temp;
 
     DDS_CS_CLR();               // Start transfer
+    _delay_us(1);
 
     SPDR = (address & 0x1F) | (read_access << 7);
     while (!(SPSR & (1 << SPIF)));      // wait until transmission finished
@@ -94,7 +94,7 @@ static void dds_cmd(uint8_t address, uint8_t read_access, uint8_t * values,
     }
 
     DDS_CS_SET();               // End of transfer
-    _delay_ms(1);
+    _delay_us(1);
 }
 
 static void dds_cmd_32(uint8_t address, uint8_t read_access,
@@ -125,11 +125,11 @@ void dds_power(uint8_t on)
 {
     if(!on){ // off
         PORTA &= ~(1 << OUTPUT_LED);
-        dds_cmd_32(DDS_REGISTER_CFR1, 0, (1 << DDS_POWER_DOWN),
+        dds_cmd_32(DDS_REGISTER_CFR1, 0, (uint32_t)(1 << DDS_POWER_DOWN),
                    DDS_REGISTER_CFR1_LENGTH);
     }else{ // on
         PORTA |= (1 << OUTPUT_LED);
-        dds_cmd_32(DDS_REGISTER_CFR1, 0, (0 << DDS_POWER_DOWN),
+        dds_cmd_32(DDS_REGISTER_CFR1, 0, (uint32_t)(0 << DDS_POWER_DOWN),
                    DDS_REGISTER_CFR1_LENGTH);
     }
     DDS_DO_IOUPDATE();
@@ -138,18 +138,16 @@ void dds_power(uint8_t on)
 void ad9910_init()
 {
     DDRB |=
-        (1 << DDS_CS) | (1 << DDS_SCK) | (1 << DDS_MOSI) | (1 <<
-                                                            DDS_MASTER_RESET)
-        | (1 << DDS_IO_UPDATE) | (1 << DDS_IO_RESET);
-    //DDRB |=  (1<<DDS_SCK) | (1<<DDS_MOSI) | (1<<DDS_MASTER_RESET) | (1<<DDS_IO_UPDATE) | (1<<DDS_IO_RESET);
+        (1 << DDS_CS) | (1 << DDS_SCK) | (1 << DDS_MOSI) |
+        (1 <<DDS_MASTER_RESET)| (1 << DDS_IO_UPDATE) | (1 << DDS_IO_RESET);
+    // RESET
     PORTB |= (1 << DDS_CS) | (1 << DDS_IO_RESET) | (1 << DDS_MASTER_RESET);
-    _delay_us(1);
+    _delay_ms(1);
     PORTB &= ~((1 << DDS_IO_RESET) | (1 << DDS_MASTER_RESET));
 
     DDRE |=
-        (1 << DDS_OSK) | (1 << DDS_DRCTL) | (1 << DDS_PROFILE0) | (1 <<
-                                                                   DDS_PROFILE1)
-        | (1 << DDS_PROFILE2);
+        (1 << DDS_OSK) | (1 << DDS_DRCTL) | (1 << DDS_PROFILE0) |
+        (1 <<DDS_PROFILE1)| (1 << DDS_PROFILE2);
     PORTE |= (1 << DDS_OSK);
     PORTE &= ~(1 << DDS_DRCTL);
 
@@ -161,9 +159,7 @@ void ad9910_init()
     //SPI
     SPCR |=
         (1 << SPE) | (1 << MSTR) | (1 << SPR1) | (1 << SPR0) | (0 << CPOL);
-//      SPSR |= (1<<SPI2X);
-
-    DDS_DO_RESET();
+    //SPSR |= (1<<SPI2X);
 
     dds_cmd_32(DDS_REGISTER_CFR3, 0,
                PLL_N(40) | PLL_ENABLE | REFCLK_IN_DIV_RESET_B | PLL_DRV0(1)
@@ -181,7 +177,7 @@ void dds_set_single_tone_frequency(uint16_t amplitude, uint32_t frequency)
         ((uint64_t) amplitude & 0x3FFF) << 48 | (uint64_t) phase << 32 |
         (uint32_t) (((double) frequency * FREQUENCY_FACTOR));
     dds_cmd_64(DDS_REGISTER_SINGLE_TONE0, 0, val,
-               DDS_REGISTER_SINGLE_TONE_LENGTH);
+              DDS_REGISTER_SINGLE_TONE_LENGTH);
     DDS_DO_IOUPDATE();
 }
 

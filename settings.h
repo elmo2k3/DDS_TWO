@@ -17,7 +17,7 @@ enum UNIT_FORMAT
 struct _settings
 {
     uint8_t output_active;
-    enum UNIT_FORMAT unit_format;
+    //enum UNIT_FORMAT unit_format;
     struct page_graph_settings graph_settings;
     struct page_singletone_settings singletone_settings;
 };

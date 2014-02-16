@@ -76,7 +76,9 @@ void draw_graph(struct menuitem *self,uint8_t event)
 
     for (uint8_t i = 0; i < 120; i++) {
         frequency = settings.graph_settings.lower_frequency + f_step*i;
-        dds_set_single_tone_frequency(10, frequency);
+        if(settings.output_active){
+            dds_set_single_tone_frequency(10, frequency);
+        }
         if (self->num == 2) {
             power_val = getPDValue(PD_REFLECT);
         } else if (self->num == 3) {

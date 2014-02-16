@@ -40,7 +40,7 @@ void draw_frequency_start(void)
 {
     char f_val[10];
 
-    sprintf(f_val,"%ld",settings.graph_settings.lower_frequency/1000000ul); 
+    snprintf(f_val,10,"%ld",settings.graph_settings.lower_frequency/1000000ul); 
     draw_settings_line(PSTR("F_Start [MHz]"),f_val,0);
 }
 
@@ -48,7 +48,7 @@ void draw_frequency_stop(void)
 {
     char f_val[10];
 
-    sprintf(f_val,"%ld",settings.graph_settings.upper_frequency/1000000ul); 
+    snprintf(f_val,10,"%ld",settings.graph_settings.upper_frequency/1000000ul); 
     draw_settings_line(PSTR("F_Stop [MHz]"),f_val,1);
 }
 
@@ -67,7 +67,7 @@ void update_settings(struct menuitem *self, uint8_t event)
 uint8_t settings_button_pressed(struct menuitem *self, uint8_t button)
 {
     if(button != 4){
-        return state;
+        return state!=0;
     }
     if (state == STATE_IDLE) {
         state = STATE_FREQUENCY_START;
@@ -90,7 +90,7 @@ void settings_drehgeber(struct menuitem *self, int8_t steps)
     switch (state) {
     case STATE_FREQUENCY_START:
         settings.graph_settings.lower_frequency += (uint32_t) steps *1000ul * 1000ul;
-        if (settings.graph_settings.lower_frequency > 1000000000)
+        if (settings.graph_settings.lower_frequency> 1000000000)
             settings.graph_settings.lower_frequency = 0;
         if (settings.graph_settings.lower_frequency > 500000000)
             settings.graph_settings.lower_frequency = 500000000;
@@ -100,10 +100,10 @@ void settings_drehgeber(struct menuitem *self, int8_t steps)
         break;
     case STATE_FREQUENCY_STOP:
         settings.graph_settings.upper_frequency += (uint32_t) steps *1000ul * 1000ul;
-        if (settings.graph_settings.lower_frequency > 1000000000)
-            settings.graph_settings.lower_frequency = 0;
-        if (settings.graph_settings.lower_frequency > 500000000)
-            settings.graph_settings.lower_frequency = 500000000;
+        if (settings.graph_settings.upper_frequency > 1000000000)
+            settings.graph_settings.upper_frequency = 0;
+        if (settings.graph_settings.upper_frequency > 500000000)
+            settings.graph_settings.upper_frequency = 500000000;
         if (settings.graph_settings.upper_frequency < settings.graph_settings.lower_frequency)
             settings.graph_settings.upper_frequency = settings.graph_settings.lower_frequency;
         draw_frequency_stop();

@@ -28,55 +28,55 @@ static uint16_t offset_transmit;
 void
 adcCalibOffset ()
 {
-  uint16_t min1, min2, min3;
-  uint16_t val;
-  uint8_t i;
+	uint16_t min1, min2, min3;
+	uint16_t val;
+	uint8_t i;
 
-  offset_reflect = 0;
-  offset_forward = 0;
-  offset_transmit = 0;
+	offset_reflect = 0;
+	offset_forward = 0;
+	offset_transmit = 0;
 
-  min1 = 1025;
-  min2 = 1025;
-  min3 = 1025;
+	min1 = 1025;
+	min2 = 1025;
+	min3 = 1025;
 
-  for (i = 0; i < 10; i++)
-    {
-      if ((val = getPDValue (PD_REFLECT)) < min1)
-	min1 = val;
-      if ((val = getPDValue (PD_FORWARD)) < min2)
-	min2 = val;
-      if ((val = getPDValue (PD_TRANSMISSION)) < min3)
-	min3 = val;
-    }
-  offset_reflect = min1;
-  offset_forward = min2;
-  offset_transmit = min3;
+	for (i = 0; i < 10; i++)
+	{
+	  if ((val = getPDValue (PD_REFLECT)) < min1)
+		min1 = val;
+	  if ((val = getPDValue (PD_FORWARD)) < min2)
+		min2 = val;
+	  if ((val = getPDValue (PD_TRANSMISSION)) < min3)
+		min3 = val;
+	}
+	offset_reflect = min1;
+	offset_forward = min2;
+	offset_transmit = min3;
 }
 
 uint16_t
 getPDValue (uint8_t mux)
 {
-  uint16_t avg = 0;
+	uint16_t avg = 0;
 
-  ADCSRA = (1 << ADEN) | (1 << ADPS2);	// prescaler 16
-  ADMUX = (1 << REFS0) | mux;	// vcc reference and ADC0 Channel
+	ADCSRA = (1 << ADEN) | (1 << ADPS2);	// prescaler 16
+	ADMUX = (1 << REFS0) | mux;	// vcc reference and ADC0 Channel
 
-  ADCSRA |= 1 << ADSC;
-  while (ADCSRA & (1 << ADSC));	// throw away first measurement
+	ADCSRA |= 1 << ADSC;
+	while (ADCSRA & (1 << ADSC));	// throw away first measurement
 
-  ADCSRA |= 1 << ADSC;
-  while (ADCSRA & (1 << ADSC));
+	ADCSRA |= 1 << ADSC;
+	while (ADCSRA & (1 << ADSC));
 
-  avg = ADC;
-  ADCSRA &= ~(1 << ADEN);	//ADC disable for powersaving
+	avg = ADC;
+	ADCSRA &= ~(1 << ADEN);	//ADC disable for powersaving
 
-  if (mux == PD_REFLECT)
-    avg -= offset_reflect;
-  else if (mux == PD_FORWARD)
-    avg -= offset_forward;
-  else if (mux == PD_TRANSMISSION)
-    avg -= offset_transmit;
+	if (mux == PD_REFLECT)
+		avg -= offset_reflect;
+	else if (mux == PD_FORWARD)
+		avg -= offset_forward;
+	else if (mux == PD_TRANSMISSION)
+		avg -= offset_transmit;
 
-  return avg;
+	return avg;
 }

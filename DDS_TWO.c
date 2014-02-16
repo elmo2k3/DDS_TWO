@@ -41,7 +41,9 @@
 
 #define UART_BAUDRATE 115200
 
-#define NUM_PAGES 4
+uint8_t NUM_PAGES;
+
+//#define NUM_PAGES 4
 static struct menuitem menu[] = {
     {NULL, 0, update_singletone, singletone_drehgeber, singletone_button_pressed, page_singletone},
     {NULL, 1, NULL, settings_drehgeber, settings_button_pressed, page_settings},
@@ -71,6 +73,9 @@ int main(void)
     int8_t old_menu_position = 0;
     uint8_t focus_here = 1;
 
+    //NUM_PAGES = sizeof(struct menuitem) * sizeof(menu);
+    NUM_PAGES = 4;
+
     menu[0].name = PSTR("Single Tone");
     menu[1].name = PSTR("Sweep settings");
     menu[2].name = PSTR("Reflection");
@@ -91,8 +96,6 @@ int main(void)
     uart_puts("DDS\r\n");
     while (1) {
 
-        //draw_page_header(&menu[0]);
-        //TODO:: Please write your application code
         if (uart_getc() == 'a') {
             cli();
             printBootloader();
@@ -146,6 +149,8 @@ int main(void)
             }
         }
         if (get_key_press(1 << KEY3)) { //button right
+            wdt_enable(WDTO_15MS);
+            while (1);
             if (menu[menu_position].taster_func) {
                 focus_here =
                     menu[menu_position].taster_func(&menu[menu_position],
@@ -172,7 +177,6 @@ int main(void)
 ISR(TIMER0_COMP_vect)           // 1ms
 {
     cli();
-    uint8_t toggle = 0;
     static uint16_t prescaler = 3000;   // 5000 = 1s
     drehgeber_work();
     if (--prescaler == 0) {

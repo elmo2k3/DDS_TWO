@@ -39,7 +39,7 @@ void page_singletone_settings_init()
     settings.singletone_settings.gain = 8;
 }
 
-static enum cursor_state {
+enum cursor_state {
     STATE_IDLE,
     STATE_FREQUENCY_MHZ,
     STATE_FREQUENCY_KHZ,
@@ -77,7 +77,7 @@ void printForwardPower(uint8_t update)
 
     if (current_val != last_val) {
         ks0108FillRect(60, 16, 20, 10, WHITE);
-        sprintf(str, "%d", current_val);
+        snprintf(str,15, "%d", current_val);
         ks0108SelectFont(1, BLACK);
         ks0108GotoXY(0, 17);
         ks0108Puts_P(PSTR("Forward"));
@@ -100,7 +100,7 @@ void printReflectPower(uint8_t update)
 
     if (current_val != last_val) {
         ks0108FillRect(60, 16 + 10, 20, 10, WHITE);
-        sprintf(str, "%d", current_val);
+        snprintf(str,15, "%d", current_val);
         ks0108SelectFont(1, BLACK);
         ks0108GotoXY(0, 17 + 10);
         ks0108Puts_P(PSTR("Reverse"));
@@ -123,7 +123,7 @@ void printTransmitPower(uint8_t update)
 
     if (current_val != last_val) {
         ks0108FillRect(60, 16 + 20, 20, 10, WHITE);
-        sprintf(str, "%d", current_val);
+        snprintf(str,15, "%d", current_val);
         ks0108SelectFont(1, BLACK);
         ks0108GotoXY(0, 17 + 20);
         ks0108Puts_P(PSTR("Received"));
@@ -139,7 +139,7 @@ void printGain(uint8_t toggle)
     static uint8_t gain_last = 16;
 
     if (settings.singletone_settings.gain != gain_last) {
-        sprintf(str, "v = %02d", settings.singletone_settings.gain);
+        snprintf(str, 15,"v = %02d", settings.singletone_settings.gain);
         ks0108SelectFont(3, BLACK);
         ks0108FillRect(93, 28, 34, 20, WHITE);
         ks0108GotoXY(85, 28);
@@ -159,7 +159,7 @@ void printFrequencyMhz(uint8_t toggle)
 
     if (settings.singletone_settings.frequency != frequency_last) {
         mhz = settings.singletone_settings.frequency / 1000000ul;
-        sprintf(str, "f = %03ld", mhz);
+        snprintf(str,15, "f = %03ld", mhz);
         ks0108SelectFont(3, BLACK);
         ks0108FillRect(12, 48, 33, 20, WHITE);
         ks0108GotoXY(12, 48);
@@ -180,7 +180,7 @@ void printFrequencyKhz(uint8_t toggle)
     if (settings.singletone_settings.frequency != frequency_last) {
         mhz = settings.singletone_settings.frequency / 1000000ul;
         khz = (settings.singletone_settings.frequency - mhz * 1000000ul) / 1000ul;
-        sprintf(str, ".%03ldMHz", khz);
+        snprintf(str,15, ".%03ldMHz", khz);
         ks0108SelectFont(3, BLACK);
         ks0108FillRect(60, 48, 66, 20, WHITE);
         ks0108GotoXY(60, 48);
@@ -222,8 +222,6 @@ void update_singletone(struct menuitem *self, uint8_t event)
 
     //clear_page_singletone();
     //
-    uint32_t tcData;
-
     //tcData = getTcData();
 
     //frequency = (tcData>>4)&0xFFF;

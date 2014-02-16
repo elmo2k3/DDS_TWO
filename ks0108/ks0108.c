@@ -25,7 +25,7 @@
 static lcdCoord		ks0108Coord;
 //#define ks0108FontColor BLACK
 static uint8_t ks0108FontColor;
-static const uint8_t *ks0108Font;
+static uint8_t *ks0108Font;
 
 void ks0108DrawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color) {
 	uint8_t length, i, y, yAlt, xTmp, yTmp;
@@ -484,7 +484,6 @@ void ks0108Enable(void) {
 				 "nop\n\t"
 				 "nop\n\t"
 				 ::);
-	//_delay_us(2);
 	LCD_CMD_PORT &= ~(0x01 << EN);
 	//for(volatile uint8_t i=0; i<24; i++);			// a little delay loop (faster than reading the busy flag)
 	_delay_us(6);
