@@ -76,12 +76,12 @@ void printForwardPower(uint8_t update)
     current_val = getPDValue(PD_FORWARD);
 
     if (current_val != last_val) {
-        ks0108FillRect(60, 16, 20, 10, WHITE);
+        ks0108FillRect(50, 16, 30, 10, WHITE);
         snprintf(str,15, "%d", current_val);
         ks0108SelectFont(1, BLACK);
         ks0108GotoXY(0, 17);
         ks0108Puts_P(PSTR("Forward"));
-        ks0108GotoXY(60, 17);
+        ks0108GotoXY(50, 17);
         ks0108Puts(str);
     }
     last_val = current_val;
@@ -99,12 +99,12 @@ void printReflectPower(uint8_t update)
     current_val = getPDValue(PD_REFLECT);
 
     if (current_val != last_val) {
-        ks0108FillRect(60, 16 + 10, 20, 10, WHITE);
+        ks0108FillRect(50, 16 + 10, 30, 10, WHITE);
         snprintf(str,15, "%d", current_val);
         ks0108SelectFont(1, BLACK);
         ks0108GotoXY(0, 17 + 10);
         ks0108Puts_P(PSTR("Reverse"));
-        ks0108GotoXY(60, 17 + 10);
+        ks0108GotoXY(50, 17 + 10);
         ks0108Puts(str);
     }
     last_val = current_val;
@@ -122,12 +122,12 @@ void printTransmitPower(uint8_t update)
     current_val = getPDValue(PD_TRANSMISSION);
 
     if (current_val != last_val) {
-        ks0108FillRect(60, 16 + 20, 20, 10, WHITE);
+        ks0108FillRect(50, 16 + 20, 30, 10, WHITE);
         snprintf(str,15, "%d", current_val);
         ks0108SelectFont(1, BLACK);
         ks0108GotoXY(0, 17 + 20);
         ks0108Puts_P(PSTR("Received"));
-        ks0108GotoXY(60, 17 + 20);
+        ks0108GotoXY(50, 17 + 20);
         ks0108Puts(str);
     }
     last_val = current_val;

@@ -40,20 +40,20 @@
 #include "adc.h"
 
 #define UART_BAUDRATE 115200
+#define SEC_HALF 0
 
 uint8_t NUM_PAGES;
+uint8_t refreshFlags;
 
 //#define NUM_PAGES 4
 static struct menuitem menu[] = {
+//    Page Name | Number | Periodic | Drehgeber | Button | Init page
     {NULL, 0, update_singletone, singletone_drehgeber, singletone_button_pressed, page_singletone},
     {NULL, 1, NULL, settings_drehgeber, settings_button_pressed, page_settings},
     {NULL, 2, draw_graph, NULL, NULL, page_graph},
     {NULL, 3, draw_graph, NULL, NULL, page_graph}
 };
 
-uint8_t refreshFlags;
-
-#define SEC_HALF 0
 void io_init(void)
 {
     // PULLUPS
