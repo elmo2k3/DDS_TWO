@@ -22,7 +22,7 @@
 #define __PAGE_SETTINGS_H__
 
 #include <stdint.h>
-#include "DDS_TWO.h"
+#include "menu.h"
 
 void page_settings(struct menuitem *self);
 void update_settings(struct menuitem *self, uint8_t event);

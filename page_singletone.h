@@ -21,7 +21,7 @@
 #ifndef __PAGE_singletone_H__
 #define __PAGE_singletone_H__
 
-#include "DDS_TWO.h"
+#include "menu.h"
 
 void update_singletone(struct menuitem *self, uint8_t event);
 void page_singletone(struct menuitem *self);

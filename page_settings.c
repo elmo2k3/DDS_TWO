@@ -23,7 +23,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "DDS_TWO.h"
+#include "menu.h"
 #include "page_misc.h"
 #include "ks0108/ks0108.h"
 #include "page_settings.h"

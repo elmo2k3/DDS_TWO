@@ -475,6 +475,7 @@ void ks0108Init() {
 }
 
 void ks0108Enable(void) {
+	_delay_us(1);
 	LCD_CMD_PORT |= 0x01 << EN;						// EN high level width: min. 450ns
 	asm volatile("nop\n\t"
 				 "nop\n\t"

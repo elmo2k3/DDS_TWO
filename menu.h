@@ -18,23 +18,25 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __PAGE_MISC_H___
-#define __PAGE_MISC_H__
+#ifndef __MENU_H__
+#define __MENU_H__
 
+#include <stdint.h>
 #include <avr/pgmspace.h>
-#include <inttypes.h>
-#include "menu.h"
 
+struct menuitem
+{
+    PGM_P name;
+    uint8_t num;
+    void (*refresh_func)(struct menuitem *self, uint8_t event);
+    void (*drehgeber_func)(struct menuitem *self, int8_t steps);
+    uint8_t (*taster_func)(struct menuitem *self, uint8_t taster);
+    void (*draw_func)(struct menuitem *self);
+};
 
-void clear_page_header(void);
-void clear_page_main(void);
-void draw_page_header(struct menuitem *self);
-void draw_arrow(uint8_t x, uint8_t y);
-void draw_settings_line(PGM_P name, char *value, uint8_t position);
-void draw_settings_line_variable_space(PGM_P name, char *value,
-                                       uint8_t position, uint8_t space);
-void draw_centered_string(char *value, uint8_t position);
-
-char *intToString(int8_t value, uint8_t one_leading_zero);
+void menu_init(void);
+void menu_tick(void);
+void menu_task(void);
 
 #endif
+
